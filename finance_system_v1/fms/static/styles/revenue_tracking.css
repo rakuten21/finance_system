@@ -1,0 +1,46 @@
+/* CSS Variables for Consistency and Ease of Management */
+:root {
+  --primary-color: #c8131a;
+  --secondary-color: #ff6b6b;
+  --background-color: #fdf8ed;
+  --text-color: #333;
+  --sidebar-width: 15%;
+  --sidebar-expanded-width: 200px;
+  --sidebar-background-color: #ffffff;
+}
+
+.chart-container {
+  background-color: var(
+    --background-color
+  ); /* Background color for the chart container */
+  border-radius: 10px; /* Border radius for rounded corners */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for aesthetics */
+  padding: 20px;
+  text-align: center; /* Center the text inside the container */
+  max-width: 100%; /* Ensure container doesn't overflow horizontally */
+  max-height: 500px; /* Set a maximum height to prevent vertical expansion */
+  overflow: hidden; /* Hide any overflowing content */
+  box-sizing: border-box; /* Include padding and border in the element’s total height */
+}
+
+.chart-container canvas {
+  max-width: 100%; /* Ensure canvas does not overflow */
+  height: 100%; /* Set height to 100% to fit container */
+}
+
+.card {
+  background-color: #ffffff; /* White background for cards */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  text-align: center; /* Center the content within each card */
+  box-sizing: border-box; /* Include padding and border in the element’s total dimensions */
+}
+
+.card h2 {
+  margin: 0 0 20px; /* Margin below the heading */
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--primary-color); /* Use primary color for headings */
+}

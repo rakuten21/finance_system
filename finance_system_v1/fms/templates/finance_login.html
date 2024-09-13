@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In | Passenger Seat</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='imgs/tab_img.png') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/login.css') }}"
+    />
+    <script>
+      async function handleLogin(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        const username = document.querySelector('input[name="username"]').value;
+        const password = document.querySelector('input[name="password"]').value;
+
+        try {
+          const response = await fetch("{{ config.AUTH_SERVICE_URL }}/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            // Save token and username in localStorage
+            localStorage.setItem("authToken", data.token);
+            localStorage.setItem("username", data.username); // Store the username
+
+            // Redirect to the dashboard or the main application page
+            window.location.href = "/finance_dashboard";
+          } else {
+            // Show error message
+            document.querySelector(".flash-messages").innerText = data.message;
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          document.querySelector(".flash-messages").innerText =
+            "An error occurred. Please try again later.";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="left">
+        <img
+          src="{{ url_for('static', filename='imgs/passenger_seat_logo.png') }}"
+          alt="Passenger Seat Logo"
+        />
+      </div>
+      <div class="right">
+        <div class="form-container">
+          <h2>Sign in</h2>
+          <form onsubmit="handleLogin(event)">
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              autocomplete="off"
+              required
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              autocomplete="off"
+              required
+            />
+            <div class="flash-messages"></div>
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

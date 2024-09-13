@@ -1,0 +1,657 @@
+{% extends 'base.html' %} {% block title %}Journal Entries{% endblock %} {%
+block head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='styles/journal_entries.css') }}"
+/>
+{% endblock %} {% block content %}
+<div class="text-left">
+  <h1 class="page-title">Journal Entries</h1>
+</div>
+<div class="container-fluid">
+  <div class="row mb-3 mt-4">
+    <div class="col-md-6 d-flex align-items-center">
+      <label for="entriesPerPage" class="me-2">Entries per page:</label>
+      <select id="entriesPerPage" class="form-select form-select-sm w-auto">
+        <option value="10">5</option>
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end align-items-center">
+      <div class="input-group me-3" style="width: 300px">
+        <input
+          type="text"
+          class="form-control form-control-md"
+          placeholder="Search"
+          aria-label="Search"
+        />
+        <span class="input-group-text bg-danger">
+          <i class="fa fa-search text-white"></i>
+        </span>
+      </div>
+
+      <!-- Filter Dropdown Button -->
+      <div class="dropdown">
+        <button
+          class="btn btn-danger dropdown-toggle d-flex align-items-center justify-content-center"
+          type="button"
+          id="filterDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="fas fa-filter me-2"></i>
+          <span>Filter</span>
+        </button>
+        <ul class="dropdown-menu p-3" aria-labelledby="filterDropdown">
+          <!-- Filter checkboxes -->
+          <li class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="filterAsset"
+              value="Asset"
+            />
+            <label class="form-check-label" for="filterAsset">Asset</label>
+          </li>
+          <li class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="filterLiabilities"
+              value="Liabilities"
+            />
+            <label class="form-check-label" for="filterLiabilities"
+              >Liabilities</label
+            >
+          </li>
+          <li class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="filterEquity"
+              value="Equity"
+            />
+            <label class="form-check-label" for="filterEquity">Equity</label>
+          </li>
+          <li class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="filterRevenue"
+              value="Revenue"
+            />
+            <label class="form-check-label" for="filterRevenue">Revenue</label>
+          </li>
+          <li class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="filterExpenses"
+              value="Expenses"
+            />
+            <label class="form-check-label" for="filterExpenses"
+              >Expenses</label
+            >
+          </li>
+
+          <!-- Apply Filters Button -->
+          <li>
+            <button class="btn btn-success mt-2 w-100" id="applyFilters">
+              Apply Filters
+            </button>
+          </li>
+
+          <!-- Reset Filters Button -->
+          <li>
+            <button class="btn btn-secondary mt-2 w-100" id="resetFilters">
+              Reset Filters
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="alert-container">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+    <div class="col">
+      <table
+        class="table table-hover table-bordered mt-3 custom-border text-center"
+      >
+        <thead>
+          <tr>
+            <th>Journal Entry No.</th>
+            <th>Account Code</th>
+            <th>Account Description</th>
+            <th>Amount</th>
+            <th>Particulars</th>
+            <th>Book</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="accountsTableBody">
+          <!-- Example rows; replace with dynamic content as needed -->
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+              <button
+                class="btn btn-danger btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#editJEModal"
+              >
+                Edit
+              </button>
+              <button
+                class="btn btn-danger btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#viewJEDetailsModal"
+              >
+                View Details
+              </button>
+            </td>
+          </tr>
+          
+        </tbody>
+      </table>
+
+      <!-- Add Journal Entry Button and Pagination Section -->
+      <div class="d-flex justify-content-between align-items-center">
+        <button
+          class="btn btn-danger add-btn"
+          data-bs-toggle="modal"
+          data-bs-target="#addJEModal"
+        >
+          Add Journal entry
+        </button>
+        <nav>
+          <ul class="pagination pagination-sm">
+            <li class="page-item disabled">
+              <a class="page-link" href="#">Previous</a>
+            </li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add JE Modal -->
+<div
+  class="modal fade"
+  id="addJEModal"
+  tabindex="-1"
+  aria-labelledby="addJEModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg custom-modal-width modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addJEModalLabel">Add Journal Entry</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- Form Fields -->
+        <form method="POST" action="{{ url_for('journal_entries.add_journal_entry') }}">
+          <div class="row mb-3">
+            <div class="col">
+              <label for="journalEntryNo" class="form-label">Journal Entry No.</label>
+              <input type="text" class="form-control" id="journalEntryNo" name="journal_entry_no" readonly value="{{ journal_entry_no }}"/>
+            </div>
+
+            <div class="col">
+              <label for="journalEntryDate" class="form-label">Date</label>
+              <input type="date" class="form-control" id="journalEntryDate" name="journalEntryDate" required/>
+            </div>
+            <div class="col">
+              <label for="journalEntryPeriod" class="form-label">Period</label>
+              <input
+                type="month"
+                class="form-control"
+                id="journalEntryPeriod"
+                name="journalEntryPeriod"
+                required
+              />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="bookType" class="form-label">Book</label>
+              <select class="form-select" aria-label="Book Type Dropdown" name="bookType">
+                <option selected disabled>Select Book</option>
+                {% for book in list_of_books %}
+                  <option value="{{ book['book_name'] }}">{{ book['book_name'] }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <label for="journalEntryDescription" class="form-label">Description</label>
+              <textarea class="form-control" name="journalEntryDescription" id="journalEntryDescription" rows="1" required autocomplete="off" placeholder="Enter entry description" name="journalEntryDescription"></textarea>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="table-container">
+            <table class="table table-bordered" id="journalTable">
+              <thead class="h6 text-white text-center">
+                <tr>
+                  <th>Account Code</th>
+                  <th>Account Description</th>
+                  <th>Debit</th>
+                  <th>Credit</th>
+                  <th>Particulars</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="journalTableBody">
+                <tr>
+                  <td>
+                    <select class="form-select account-code-dropdown" aria-label="Account Code Dropdown" name="account_code[]">
+                      <option selected disabled>Select Account Code</option>
+                      {% for account in list_of_accounts %}
+                        <option value="{{ account['account_code'] }}">{{ account['account_code'] }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                  <td>
+                    <select class="form-select account-description-dropdown" aria-label="Account Description Dropdown" name="account_description[]">
+                      <option selected disabled>Select Account Description</option>
+                      {% for account in list_of_accounts %}
+                        <option value="{{ account['account_code'] }}">{{ account['account_description'] }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                  <td>
+                    <input type="number" class="form-control debit_amount" name="debit[]" step="0.01" placeholder="Debit" autocomplete="off" />
+                  </td>
+                  <td>
+                    <input type="number" class="form-control credit_amount" name="credit[]" step="0.01" placeholder="Credit" autocomplete="off" />
+                  </td>
+                  <td>
+                    <textarea class="form-control" rows="1" name="particulars[]" placeholder="Particulars" autocomplete="off"></textarea>
+                  </td>
+                  <td>
+                    <button class="btn btn-danger remove-row text-center">x</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="action-buttons">
+              <button class="btn btn-success" id="addRow">Add Row</button>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <div class="container-fluid">
+          <div class="row w-100">
+            <div class="col text-start">
+              <strong>Total Debit:</strong> <span id="totalDebit">0.00</span> | 
+              <strong>Total Credit:</strong> <span id="totalCredit">0.00</span>
+            </div>
+            <div class="col text-end">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Close
+              </button>
+              <button type="submit" class="btn btn-danger">Save Entry</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Template for a new row -->
+<template id="newRowTemplate">
+  <tr>
+    <td>
+      <select class="form-select account-code-dropdown" aria-label="Account Code Dropdown">
+        <option selected disabled>Select Account Code</option>
+        {% for account in list_of_accounts %}
+        <option value="{{ account['account_code'] }}">{{ account['account_code'] }}</option>
+        {% endfor %}
+      </select>
+    </td>
+    <td>
+      <select class="form-select account-description-dropdown" aria-label="Account Description Dropdown">
+        <option selected disabled>Select Account Description</option>
+        {% for account in list_of_accounts %}
+        <option value="{{ account['account_code'] }}">{{ account['account_description'] }}</option>
+        {% endfor %}
+      </select>
+    </td>
+    <td>
+      <input type="number" class="form-control debit_amount" step="0.01" placeholder="Debit" autocomplete="off"/>
+    </td>
+    <td>
+      <input type="number" class="form-control credit_amount" step="0.01" placeholder="Credit" autocomplete="off"/>
+    </td>
+    <td>
+      <textarea class="form-control" rows="1" id="particulars" placeholder="Particulars" autocomplete="off"></textarea>
+    </td>
+    <td>
+      <button class="btn btn-danger remove-row text-center">x</button>
+    </td>
+  </tr>
+</template>
+
+<!-- Edit JE Modal -->
+<div
+  class="modal fade"
+  id="editJEModal"
+  tabindex="-1"
+  aria-labelledby="editJEModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg custom-modal-width modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editJEModalLabel">Edit Journal Entry</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- Form Fields -->
+        <form>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="editJournalEntryNo" class="form-label"
+                >Journal Entry No.</label
+              >
+              <input type="text" class="form-control" id="editJournalEntryNo" readonly/>
+            </div>
+            <div class="col">
+              <label for="editJournalEntryDate" class="form-label">Date</label>
+              <input
+                type="date"
+                class="form-control"
+                id="editJournalEntryDate"
+                required
+              />
+            </div>
+            <div class="col">
+              <label for="editJournalEntryPeriod" class="form-label"
+                >Period</label
+              >
+              <input
+                type="month"
+                class="form-control"
+                id="editJournalEntryPeriod"
+                required
+              />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="editBookType" class="form-label">Book Type</label>
+              <select class="form-select" aria-label="Book Type Dropdown">
+                    <option selected disabled>Select Book Type</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                  </select>
+            </div>
+            <div class="col">
+              <label for="editJournalEntryDescription" class="form-label"
+                >Description</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="editJournalEntryDescription"
+                required
+                autocomplete="off"
+              />
+            </div>
+          </div>
+
+        <!-- Table -->
+        <div class="table-container">
+          <table class="table table-bordered" id="editJournalTable">
+            <thead class="h6 text-white text-center">
+              <tr>
+                <th>Account Code</th>
+                <th>Account Description</th>
+                <th>Debit</th>
+                <th>Credit</th>
+                <th>Particulars</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <select class="form-select" aria-label="Account Code Dropdown">
+                    <option selected disabled>Select Account Code</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                  </select>
+                </td>
+                <td>
+                  <select class="form-select" aria-label="Account Description Dropdown">
+                    <option selected disabled>Select Account Description</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                  </select>
+                </td>
+                <td>
+                  <input type="number" class="form-control debit_amount" step="0.01" placeholder="Debit" required autocomplete="off"/>
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    class="form-control credit_amount"
+                    placeholder="Credit"
+                    required
+                    autocomplete="off"
+                    step="0.01"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Particulars"
+                    autocomplete="off"
+                  />
+                </td>
+                <td>
+                  <button class="btn btn-danger remove-row d-flex justify-content-center align-items-center">x</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="action-buttons">
+            <button class="btn btn-success" id="addRow">Add Row</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="container-fluid">
+          <div class="row w-100">
+            <div class="col text-start">
+              <strong>Total Debit:</strong> <span id="totalDebit">0.00</span> | 
+              <strong>Total Credit:</strong> <span id="totalCredit">0.00</span>
+            </div>
+            <div class="col text-end">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Close
+              </button>
+              <button type="submit" class="btn btn-danger">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirmation modal when the table have data -->
+<div
+  class="modal fade"
+  id="deleteRowModal"
+  tabindex="-1"
+  aria-labelledby="deleteRowModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteRowModalLabel">Confirm Deletion</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this entire row? This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteRow">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="entryDetailsModal"
+  tabindex="-1"
+  aria-labelledby="entryDetailsModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg custom-modal-width modal-dialog-scrollable" style="max-width: 85%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="entryDetailsModalLabel">View Journal Entry</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- Form Fields -->
+        <form>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="journalEntryNo" class="form-label">Journal Entry No.</label>
+              <input type="text" class="form-control" id="journalEntryNo" name="journal_entry_no" readonly value="JE-004"/>
+            </div>
+
+            <div class="col">
+              <label for="journalEntryDate" class="form-label">Date</label>
+              <input type="date" class="form-control" id="journalEntryDate" name="journalEntryDate" required readonly value="2024-09-01"/>
+            </div>
+            <div class="col">
+              <label for="journalEntryPeriod" class="form-label">Period</label>
+              <input
+                type="text"
+                class="form-control"
+                id="journalEntryPeriod"
+                name="journalEntryPeriod"
+                required
+                 readonly value="September 2024"
+              />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="bookType" class="form-label">Book</label>
+              <select class="form-select" aria-label="Book Type Dropdown" name="bookType" readonly>
+                <option value="Cash Book" selected> Cash Book</option>
+              </select>
+            </div>
+            <div class="col">
+              <label for="journalEntryDescription" class="form-label">Description</label>
+              <textarea class="form-control" name="journalEntryDescription" id="journalEntryDescription" rows="1" required autocomplete="off" placeholder="Enter entry description" name="journalEntryDescription" readonly>Recorded daily sales revenue</textarea>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="table-container">
+            <table class="table table-bordered" id="journalTable">
+              <thead class="h6 text-white text-center">
+                <tr>
+                  <th>Account Code</th>
+                  <th>Account Description</th>
+                  <th>Debit</th>
+                  <th>Credit</th>
+                  <th>Particulars</th>
+                </tr>
+              </thead>
+              <tbody id="journalTableBody">
+                <tr>
+                  <td>101</td>
+                  <td>Cash</td>
+                  <td>51300.00</td>
+                  <td></td>
+                  <td rowspan="2">Recorded daily sales revenue from dining and takeout services.</td>
+                </tr>
+
+                <tr>
+                  <td>401</td>
+                  <td>Sales Revenue</td>
+                  <td></td>
+                  <td>51300.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <div class="container-fluid">
+          <div class="row w-100">
+            <div class="col text-start">
+              <strong>Entry by:</strong> <span id="totalDebit">Aifa Miranda</span> | 
+              <strong>Approved by:</strong> <span id="totalCredit">Trishia Bayona</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='scripts/journal_entries.js') }}"></script>
+{% endblock %}

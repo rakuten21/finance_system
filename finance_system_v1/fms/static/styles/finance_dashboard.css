@@ -1,0 +1,97 @@
+/* CSS Variables for Consistency and Ease of Management */
+:root {
+  --primary-color: #c8131a;
+  --secondary-color: #ff6b6b;
+  --background-color: #fdf8ed;
+  --text-color: #333;
+  --sidebar-width: 15%;
+  --sidebar-expanded-width: 200px;
+  --sidebar-background-color: #ffffff;
+}
+
+.dashboardpt1 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Creates 3 equal-width columns */
+  gap: 20px;
+  padding: 20px;
+  background-color: var(--background-color); /* Optional: background color */
+  border-radius: 10px; /* Optional: border radius */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Optional: shadow for aesthetics */
+  margin-bottom: 20px;
+}
+
+.card {
+  background-color: #ffffff; /* White background for cards */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  text-align: center; /* Center the content within each card */
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color); /* Consistent text color */
+}
+
+.card h1 {
+  margin: 0 0 10px;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--primary-color); /* Primary color for the important figures */
+}
+
+.card p {
+  margin: 0;
+  font-size: 14px;
+  color: #666; /* Subtle color for additional information */
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+}
+
+.dashboardpt2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Creates 2  equal-width columns */
+  gap: 20px;
+  padding: 20px;
+  background-color: var(--background-color); /* Optional: background color */
+  border-radius: 10px; /* Optional: border radius */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Optional: shadow for aesthetics */
+}
+
+.card {
+  background-color: #ffffff; /* White background for cards */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  text-align: center; /* Center the content within each card */
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color); /* Consistent text color */
+}
+
+.card h1 {
+  margin: 0 0 10px;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--primary-color); /* Primary color for the important figures */
+}
+
+.card p {
+  margin: 0;
+  font-size: 14px;
+  color: #666; /* Subtle color for additional information */
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+}

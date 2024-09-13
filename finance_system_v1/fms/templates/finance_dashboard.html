@@ -1,0 +1,53 @@
+{% extends 'base.html' %} {% block title %}Finance Dashboard{% endblock %} {%
+block head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='styles/finance_dashboard.css') }}"
+/>
+
+{% endblock %} {% block content %}
+<div class="text-left">
+  <h1 class="page-title">Finance Dashboard</h1>
+</div>
+
+<div class="dashboardpt1">
+  <div class="card total-balance">
+    <h3>Total Income</h3>
+    <h1>₱432,568</h1>
+    <p>📈 2.47% Last month ₱24,478</p>
+  </div>
+  <div class="card total-period-change">
+    <h3>Total Expenses</h3>
+    <h1>₱245,860</h1>
+    <p>📈 2.47% Last month ₱24,478</p>
+  </div>
+  <div class="card total-period-income">
+    <h3>Net Profit</h3>
+    <h1>₱186,708</h1>
+    <p>📈 2.47% Last month ₱24,478</p>
+  </div>
+</div>
+
+<div class="dashboardpt2">
+  <!-- Income and Expenses Line Chart -->
+  <div class="card wide">
+    <h3>Income and Expenses</h3>
+    <canvas
+      id="incomeExpenseChart"
+      style="width: 100%; max-width: 600px"
+    ></canvas>
+  </div>
+
+  <!-- A donut chart for Net Profit Margin -->
+  <div class="card">
+    <h3>Net Profit Margin</h3>
+    <canvas
+      id="netProfitMarginChart"
+      style="width: 100%; max-width: 600px"
+    ></canvas>
+  </div>
+</div>
+
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='scripts/finance_dashboard.js') }}"></script>
+{% endblock %}
