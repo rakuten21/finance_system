@@ -13,7 +13,7 @@ def get_chart_of_accounts():
 
 def get_list_of_books():
     with get_mysql_cursor() as cur:
-        cur.execute("SELECT book_name FROM list_of_books")
+        cur.execute("SELECT book_id, book_name FROM list_of_books")
         list_of_books = cur.fetchall()
         cur.close()
 
@@ -53,7 +53,7 @@ def add_journal_entry():
     journal_entry_no = request.form['journal_entry_no']
     je_date = request.form['journalEntryDate']
     je_period = request.form['journalEntryPeriod']
-    je_book = request.form['bookType']
+    book_id = request.form['bookType']
     je_description = request.form['journalEntryDescription']
     
     debit_amounts = request.form.getlist('debit[]')
@@ -90,9 +90,9 @@ def add_journal_entry():
         with get_mysql_cursor() as cur:
             # Insert journal entry
             cur.execute("""
-                INSERT INTO journal_entries (journal_entry_number, je_date, je_period, je_book, je_description)
+                INSERT INTO journal_entries (journal_entry_number, je_date, je_period, book_id, je_description)
                 VALUES (%s, %s, %s, %s, %s)
-            """, (journal_entry_no, je_date, je_period, je_book, je_description))
+            """, (journal_entry_no, je_date, je_period, book_id, je_description))
             
             journal_entry_id = cur.lastrowid  # Get the ID of the inserted journal entry
 
