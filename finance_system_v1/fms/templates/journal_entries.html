@@ -126,49 +126,40 @@ block head %}
   {% endif %}
 {% endwith %}
     <div class="col">
-      <table
-        class="table table-hover table-bordered mt-3 custom-border text-center"
-      >
-        <thead>
-          <tr>
-            <th>Journal Entry No.</th>
-            <th>Account Code</th>
-            <th>Account Description</th>
-            <th>Amount</th>
-            <th>Particulars</th>
-            <th>Book</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="accountsTableBody">
-          <!-- Example rows; replace with dynamic content as needed -->
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>
-              <button
-                class="btn btn-danger btn-sm"
-                data-bs-toggle="modal"
-                data-bs-target="#editJEModal"
-              >
-                Edit
-              </button>
-              <button
-                class="btn btn-danger btn-sm"
-                data-bs-toggle="modal"
-                data-bs-target="#viewJEDetailsModal"
-              >
-                View Details
-              </button>
-            </td>
-          </tr>
-          
-        </tbody>
-      </table>
+      <table class="table table-hover table-bordered mt-3 custom-border text-center">
+  <thead>
+    <tr>
+      <th>Journal Entry No.</th>
+      <th>Date</th>
+      <th>Book</th>
+      <th>Description</th>
+      <th>Amount</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="accountsTableBody">
+    {% for entry in journal_entries %}
+    <tr>
+      <td>{{ entry.journal_entry_number }}</td>
+      <td>{{ entry.je_date }}</td>
+      <td>{{ entry.book_name }}</td>
+      <td>{{ entry.je_description }}</td>
+      <td>{{ entry.total_debit | round(2) }}</td>  <!-- or total_credit since they are equal -->
+      <td>{{ entry.status }}</td>
+      <td>
+        <button class="btn btn-danger btn-sm view-details-btn" 
+                data-id="{{ entry.journal_entry_id }}" 
+                data-bs-toggle="modal" 
+                data-bs-target="#entryDetailsModal">
+          View Details
+        </button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 
       <!-- Add Journal Entry Button and Pagination Section -->
       <div class="d-flex justify-content-between align-items-center">
@@ -550,6 +541,7 @@ block head %}
   </div>
 </div>
 
+<!-- view details modal -->
 <div
   class="modal fade"
   id="entryDetailsModal"
@@ -570,39 +562,29 @@ block head %}
       </div>
       <div class="modal-body">
         <!-- Form Fields -->
-        <form>
           <div class="row mb-3">
             <div class="col">
               <label for="journalEntryNo" class="form-label">Journal Entry No.</label>
-              <input type="text" class="form-control" id="journalEntryNo" name="journal_entry_no" readonly value="JE-004"/>
+              <input type="text" class="form-control" id="journalEntryNo" readonly />
             </div>
 
             <div class="col">
               <label for="journalEntryDate" class="form-label">Date</label>
-              <input type="date" class="form-control" id="journalEntryDate" name="journalEntryDate" required readonly value="2024-09-01"/>
+              <input type="date" class="form-control" id="journalEntryDate" readonly />
             </div>
             <div class="col">
               <label for="journalEntryPeriod" class="form-label">Period</label>
-              <input
-                type="text"
-                class="form-control"
-                id="journalEntryPeriod"
-                name="journalEntryPeriod"
-                required
-                 readonly value="September 2024"
-              />
+              <input type="text" class="form-control" id="journalEntryPeriod" readonly />
             </div>
           </div>
           <div class="row mb-3">
             <div class="col">
               <label for="bookType" class="form-label">Book</label>
-              <select class="form-select" aria-label="Book Type Dropdown" name="bookType" readonly>
-                <option value="Cash Book" selected> Cash Book</option>
-              </select>
+              <input type="text" class="form-control" id="bookType" readonly />
             </div>
             <div class="col">
               <label for="journalEntryDescription" class="form-label">Description</label>
-              <textarea class="form-control" name="journalEntryDescription" id="journalEntryDescription" rows="1" required autocomplete="off" placeholder="Enter entry description" name="journalEntryDescription" readonly>Recorded daily sales revenue</textarea>
+              <textarea class="form-control" id="journalEntryDescription" readonly></textarea>
             </div>
           </div>
 
@@ -618,22 +600,7 @@ block head %}
                   <th>Particulars</th>
                 </tr>
               </thead>
-              <tbody id="journalTableBody">
-                <tr>
-                  <td>101</td>
-                  <td>Cash</td>
-                  <td>51300.00</td>
-                  <td></td>
-                  <td rowspan="2">Recorded daily sales revenue from dining and takeout services.</td>
-                </tr>
-
-                <tr>
-                  <td>401</td>
-                  <td>Sales Revenue</td>
-                  <td></td>
-                  <td>51300.00</td>
-                </tr>
-              </tbody>
+              <tbody id="journalTableBody"></tbody>
             </table>
           </div>
       </div>
@@ -641,13 +608,15 @@ block head %}
         <div class="container-fluid">
           <div class="row w-100">
             <div class="col text-start">
-              <strong>Entry by:</strong> <span id="totalDebit">Aifa Miranda</span> | 
-              <strong>Approved by:</strong> <span id="totalCredit">Trishia Bayona</span>
+              <strong>Entry by:</strong> <span id="entryBy">Aifa Miranda</span> | 
+              <strong>Approved by:</strong> <span id="approvedBy">Trishia Bayona</span>
+            </div>
+            <div class="col text-end">
+              <button type="button" class="btn btn-success">POST</button>
             </div>
           </div>
         </div>
       </div>
-      </form>
     </div>
   </div>
 </div>

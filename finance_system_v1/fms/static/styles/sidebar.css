@@ -45,11 +45,12 @@ body {
   width: 100%;
   overflow: hidden;
   transition: all 0.35s ease-in-out;
-  margin-left: 1rem;
+  margin-left: 17.5rem;
   margin-right: 1rem;
 }
 
 #sidebar {
+  position: fixed;
   z-index: 1000;
   transition: all 0.25s ease-in-out;
   background-color: var(--sidebar-background-color);

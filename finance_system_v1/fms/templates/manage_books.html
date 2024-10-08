@@ -65,8 +65,8 @@ head %}
         <thead class="text-center">
           <tr>
             <th>Book Name</th>
-            <th>Description</th>
-            <th>Start Date</th>
+            <th>Book Type</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -74,20 +74,30 @@ head %}
           {% for book in books %}
           <tr>
             <td>{{ book.book_name }}</td>
-            <td class="description">{{ book.description }}</td>
-            <td class="text-center">{{ book.start_date }}</td>
+            <td class="description">{{ book.book_type }}</td>
+            <td class="text-center">{{ book.book_status }}</td>
             <td>
               <div class="d-flex justify-content-center align-items-center">
                 <button
                   class="btn btn-danger btn-sm me-2 edit-book-btn"
                   data-id="{{ book['book_id'] }}"
                   data-name="{{ book['book_name'] }}"
-                  data-description="{{ book['description'] }}"
-                  data-date="{{ book['start_date'] }}"
+                  data-type="{{ book['book_type'] }}"
                   data-bs-toggle="modal"
                   data-bs-target="#editBookModal"
                 >
                   Edit
+                </button>
+
+                <button
+                  class="btn btn-warning btn-sm archive-activate-btn"
+                  data-id="{{ book.book_id }}"
+                  data-name="{{ book.book_name }}"
+                  data-type="{{ book.book_type }}"
+                  data-status="{{ book.book_status }}"
+                  data-bs-toggle="modal"
+                  data-bs-target="#confirmStatusModal">
+                  {% if book.book_status == 'Active' %} Archive {% else %} Activate {% endif %}
                 </button>
               </div>
             </td>
@@ -169,27 +179,22 @@ head %}
           </div>
 
           <div class="mb-4">
-            <label for="bookDescription" class="form-label">Description</label>
-            <textarea
-              name="bookDescription"
-              id="bookDescription"
-              class="form-control"
-              rows="1"
-              placeholder="Enter book description"
+            <label for="bookType" class="form-label">Boook Type</label>
+            <select
+              class="form-select dropdown-select2"
+              id="bookType"
+              name="bookType"
               required
-              autocomplete="off"
-            ></textarea>
-          </div>
-
-          <div class="mb-4">
-            <label for="startDate" class="form-label">Start Date</label>
-            <input
-                type="date"
-                class="form-control"
-                id="startDate"
-                name="startDate"
-                required
-              />
+            >
+            <option value="" selected disabled>Choose book type</option>
+              <option value="Purchasing and Sales">Purchasing and Sales</option>
+              <option value="Cash Transactions">Cash Transactions</option>
+              <option value="Credit Transactions">Credit Transactions</option>
+              <option value="General Transactions">General Transactions</option>
+              <option value="Specialized Books">Specialized Books</option>
+              <option value="Accounts Receivable">Accounts Receivable</option>
+              <option value="Accounts Payable">Accounts Payable</option>
+            </select>
           </div>
 
           <div class="modal-footer">
@@ -209,46 +214,103 @@ head %}
 </div>
 
 <!-- Edit Book Modal -->
-<div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="editBookModal"
+  tabindex="-1"
+  aria-labelledby="editBookModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="editBookModalLabel">Edit Book</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
       <div class="modal-body">
         <form id="editBookForm" method="POST">
-          
-          <div class="mb-4">
-            <input type="hidden" id="editBookId" name="bookId" />
-            <label for="bookName" class="form-label">Book Name</label>
-            <input type="text" class="form-control" id="editBookName" name="bookName" required autocomplete="off" />
-          </div>
-          <div class="mb-4">
-            <label for="bookDescription" class="form-label">Description</label>
-            <textarea name="bookDescription" id="editBookDescription" class="form-control" rows="5" required autocomplete="off" style="resize: vertical;"></textarea>
-          </div>
+          <input type="hidden" id="editBookId" name="bookId" />
 
           <div class="mb-4">
-            <label for="editStartDate" class="form-label">Start Date</label>
+            <label for="editBookName" class="form-label">Book Name</label>
             <input
-                type="date"
-                class="form-control"
-                id="editStartDate"
-                name="startDate"
-                required
+              type="text"
+              class="form-control"
+              id="editBookName"
+              name="bookName"
+              placeholder="Enter book name"
+              required
             />
           </div>
 
+          <div class="mb-4">
+            <label for="editBookType" class="form-label">Book Type</label>
+            <select
+              class="form-select"
+              id="editBookType"
+              name="bookType"
+              required
+            >
+              <option value="Purchasing and Sales">Purchasing and Sales</option>
+              <option value="Cash Transactions">Cash Transactions</option>
+              <option value="Credit Transactions">Credit Transactions</option>
+              <option value="General Transactions">General Transactions</option>
+              <option value="Specialized Books">Specialized Books</option>
+              <option value="Accounts Receivable">Accounts Receivable</option>
+              <option value="Accounts Payable">Accounts Payable</option>
+            </select>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-danger">Save changes</button>
+          </div>
         </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" form="editBookForm" class="btn btn-danger">Save changes</button>
       </div>
     </div>
   </div>
 </div>
+
+
+<!-- Confirm Status Change Modal -->
+<div class="modal fade" id="confirmStatusModal" tabindex="-1" aria-labelledby="confirmStatusModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmStatusModalLabel">Change Book Status</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to <span id="actionType">[action]</span> this book?</p>
+        <p>Book Name: <span id="bookName">[Book Name]</span></p>
+        <p>Book Type: <span id="bookType">[Book Type]</span></p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form id="statusForm" method="POST">
+          <input type="hidden" name="action" id="actionInput">
+          <!-- Button's appearance will be updated with JS -->
+          <button type="submit" class="btn" id="confirmBtn"></button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
 
 {% endblock %} {% block scripts %}
 <script src="{{ url_for('static', filename='scripts/manage_books.js') }}"></script>

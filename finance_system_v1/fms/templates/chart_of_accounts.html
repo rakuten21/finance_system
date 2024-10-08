@@ -89,7 +89,8 @@ block head %}
             <th>Account Code</th>
             <th>Account Description</th>
             <th>Account Type</th>
-            <th>Action</th>
+            <th>Account Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="accountsTableBody">
@@ -98,6 +99,7 @@ block head %}
             <td>{{ account.account_code }}</td>
             <td>{{ account.account_description }}</td>
             <td>{{ account.account_type }}</td>
+            <td>{{ account.account_status }}</td>
             <td>
               <button
                 class="btn btn-danger btn-sm"
@@ -108,6 +110,23 @@ block head %}
                 data-account-type="{{ account.account_type }}"
               >
                 Edit
+              </button>
+              
+              <button 
+                type="button" 
+                class="btn btn-warning btn-sm" 
+                data-bs-toggle="modal" 
+                data-bs-target="#archiveConfirmationModal" 
+                data-account-code="{{ account.account_code }}" 
+                data-account-description="{{ account.account_description }}" 
+                data-account-type="{{ account.account_type }}"
+                data-archive-url="{{ url_for('chart_of_accounts.archive_account', account_code=account.account_code) }}"
+              >
+                {% if account.account_status == 'Active' %}
+                  Archive
+                {% elif account.account_status == 'Archived' %}
+                  Activate
+                {% endif %}
               </button>
             </td>
           </tr>
@@ -310,6 +329,29 @@ block head %}
         <button type="submit" form="editAccountForm" class="btn btn-danger">
           Save changes
         </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Archival/Activation Confirmation Modal -->
+<div class="modal fade" id="archiveConfirmationModal" tabindex="-1" aria-labelledby="archiveModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="archiveModalLabel"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Account Code: <span id="archiveAccountCode"></span></p>
+        <p>Account Description: <span id="archiveAccountDescription"></span></p>
+        <p>Account Type: <span id="archiveAccountType"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form id="archiveForm" method="POST">
+          <button type="submit" id="archiveConfirmButton" class="btn btn-danger"></button>
+        </form>
       </div>
     </div>
   </div>

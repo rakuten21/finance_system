@@ -37,15 +37,41 @@ def generate_journal_entry_no():
     
     return new_journal_entry_no
 
+def get_journal_entries():
+    with get_mysql_cursor() as cur:
+        # Fetch all journal entries with their respective total debit, total credit, and other details
+        cur.execute("""
+            SELECT 
+                je.journal_entry_id,
+                je.journal_entry_number,
+                je.je_date,
+                lb.book_name,
+                je.je_description,
+                je.status,
+                SUM(jel.debit_amount) AS total_debit,
+                SUM(jel.credit_amount) AS total_credit
+            FROM journal_entries je
+            JOIN list_of_books lb ON je.book_id = lb.book_id
+            JOIN journal_entry_lines jel ON je.journal_entry_id = jel.journal_entry_id
+            GROUP BY je.journal_entry_id, je.journal_entry_number, je.je_date, lb.book_name, je.je_description, je.status
+            ORDER BY je.journal_entry_id DESC
+        """)
+        journal_entries = cur.fetchall()
+        cur.close()
+    return journal_entries
+
 @journal_entries_bp.route('/')
 def display_entries():
     list_of_accounts = get_chart_of_accounts()
     list_of_books = get_list_of_books()
     new_journal_entry_no = generate_journal_entry_no()
+    journal_entries = get_journal_entries()  # Fetch journal entries
+    
     return render_template('journal_entries.html', 
                            list_of_accounts=list_of_accounts, 
                            list_of_books=list_of_books, 
-                           journal_entry_no=new_journal_entry_no)
+                           journal_entry_no=new_journal_entry_no,
+                           journal_entries=journal_entries)
 
 @journal_entries_bp.route('/add', methods=['POST'])
 def add_journal_entry():
@@ -116,3 +142,4 @@ def add_journal_entry():
         flash(f'Error saving journal entry: {str(e)}', 'error')
 
     return redirect(url_for('journal_entries.display_entries'))
+

@@ -1,29 +1,21 @@
-document
-  .getElementById("entriesPerPage")
-  .addEventListener("change", function () {
-    document.getElementById("entriesPerPageForm").submit();
-  });
 document.addEventListener("DOMContentLoaded", function () {
-  // Add event listener for edit buttons
   document.querySelectorAll(".edit-book-btn").forEach((button) => {
     button.addEventListener("click", function () {
       const bookId = button.getAttribute("data-id");
       const bookName = button.getAttribute("data-name");
-      const bookDescription = button.getAttribute("data-description");
-      const startDate = button.getAttribute("data-date");
+      const bookType = button.getAttribute("data-type"); // bookType from button data
 
-      // Set form action and populate input fields
       document
         .getElementById("editBookForm")
         .setAttribute("action", `/manage_books/edit_book/${bookId}`);
 
       document.getElementById("editBookId").value = bookId;
       document.getElementById("editBookName").value = bookName;
-      document.getElementById("editBookDescription").value = bookDescription;
-      document.getElementById("editStartDate").value = startDate;
+      document.getElementById("editBookType").value = bookType; // Populate bookType
     });
   });
 });
+
 document.getElementById("searchInput").addEventListener("input", function () {
   let query = this.value;
   console.log("Search Query:", query); // Add this to debug
@@ -58,4 +50,42 @@ document.getElementById("searchInput").addEventListener("input", function () {
         tableBody.innerHTML += row;
       });
     });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const statusButtons = document.querySelectorAll(".archive-activate-btn");
+
+  statusButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const bookId = this.getAttribute("data-id");
+      const bookName = this.getAttribute("data-name");
+      const bookType = this.getAttribute("data-type");
+      const bookStatus = this.getAttribute("data-status");
+
+      const action = bookStatus === "Active" ? "archive" : "activate";
+
+      // Update modal content
+      document.getElementById("bookName").innerText =
+        bookName || "Unknown Book"; // Update the name in the modal
+      document.getElementById("bookType").innerText =
+        bookType || "Unknown Type"; // Update the type in the modal
+      document.getElementById("actionType").innerText = action;
+      document.getElementById("actionInput").value = action;
+
+      // Set form action dynamically
+      const form = document.getElementById("statusForm");
+      form.action = `/manage_books/update_status/${bookId}`;
+
+      // Update button text and class based on action
+      const confirmBtn = document.getElementById("confirmBtn");
+      confirmBtn.innerText =
+        action === "archive" ? "Yes, archive" : "Yes, activate";
+
+      // Apply the correct classes: 'btn-danger' for Archive and 'btn-warning' for Activate
+      confirmBtn.className = "btn"; // Reset the class
+      confirmBtn.classList.add(
+        action === "archive" ? "btn-danger" : "btn-warning"
+      );
+    });
+  });
 });

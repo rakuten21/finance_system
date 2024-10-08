@@ -10,27 +10,51 @@ def validate_account_form(account_code, account_description, account_type):
         return False, 'All fields are required.'
     return True, None
 
+@chart_of_accounts_bp.route('/archive/<int:account_code>', methods=['POST'])
+def archive_account(account_code):
+    """Toggle the account's status between 'Archived' and 'Active'."""
+    with get_mysql_cursor() as cur:
+        # Check the current status of the account
+        cur.execute("SELECT account_status FROM chart_of_accounts WHERE account_code = %s", (account_code,))
+        result = cur.fetchone()
+
+        if result:
+            account_status = result['account_status']
+            
+            # If account is active, archive it; otherwise, reactivate it
+            if account_status == 'Active':
+                cur.execute("UPDATE chart_of_accounts SET account_status = 'Archived' WHERE account_code = %s", (account_code,))
+                flash('Account archived successfully!', 'success')
+            else:
+                cur.execute("UPDATE chart_of_accounts SET account_status = 'Active' WHERE account_code = %s", (account_code,))
+                flash('Account reactivated successfully!', 'success')
+
+            # Commit the transaction
+            mysql.connection.commit()
+        else:
+            flash('Account not found!', 'error')
+    
+    # Redirect back to the display page
+    return redirect(url_for('chart_of_accounts.display_accounts'))
+
+
 @chart_of_accounts_bp.route('/', methods=['GET'])
 def display_accounts():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('entriesPerPage', 10, type=int)
-
     offset = (page - 1) * per_page
 
     with get_mysql_cursor() as cur:
+        # Count total accounts
         cur.execute("SELECT COUNT(*) FROM chart_of_accounts")
         result = cur.fetchone()
-        
-        print("Result from COUNT query:", result)
-        
-        if result:
-            total_accounts = result['COUNT(*)']
-        else:
-            total_accounts = 0
+        total_accounts = result['COUNT(*)'] if result else 0
 
+        # Fetch accounts sorted with 'Active' accounts first, then 'Archived'
         cur.execute("""
-            SELECT account_code, account_description, account_type 
+            SELECT account_code, account_description, account_type, account_status 
             FROM chart_of_accounts 
+            ORDER BY FIELD(account_status, 'Active', 'Archived'), account_code
             LIMIT %s OFFSET %s
         """, (per_page, offset))
         accounts = cur.fetchall()
@@ -91,5 +115,3 @@ def edit_account(account_code):
 
     flash('Account updated successfully!', 'success')
     return redirect(url_for('chart_of_accounts.display_accounts'))
-
-
