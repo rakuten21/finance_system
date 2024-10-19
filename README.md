@@ -1,5 +1,3 @@
-# testinggggggggggggggggggg
-
 # Finance Management System (v1)
 
 ## Getting Started
