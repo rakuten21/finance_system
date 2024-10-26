@@ -1,0 +1,313 @@
+:root {
+    --primary-color: #c8131a;
+    --secondary-color: #ff6b6b;
+    --background-color: #fdf8ed;
+    --text-color: #333;
+    --sidebar-width: 250px;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar-placeholder {
+    width: var(--sidebar-width);
+    background-color: #f87878;
+    height: 100%;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow: auto;
+    background-color: var(--background-color);
+}
+
+h3.title {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.filter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Separates dropdown to the left and icon to the right */
+    margin-bottom: 20px;
+}
+
+.download-icon {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.download-icon:hover {
+    color: var(--secondary-color);
+}
+
+
+.filter select {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+/* expense Graphs Container */
+.expense_graphs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    
+    
+}
+
+/* Card Styling */
+.card {
+    background-color: #fdf8ed;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Canvas Styling for Charts */
+canvas {
+    max-width: 100%;
+    height: 300px;
+}
+
+/* Center Align Titles */
+.card h3 {
+    font-size: 1.5rem;
+    text-align: center;
+    color: var(--primary-color);
+}
+
+/* Forecast Table */
+.forecast_table {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    
+}
+
+.forecast_table h1 {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.forecast_table tbody td {
+    padding: 10px; /* Padding for body cells */
+    border: 2px solid rgb(12, 12, 12); /* Black border for body cells */
+}
+
+
+
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    
+}
+
+
+.table thead th {
+    background-color:#c8131a;
+    color: #fff;
+    padding: 10px;
+    text-align: left;
+    border: 2px solid rgb(12, 12, 12); /* Black border for body cells */
+}
+
+.table tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Align pagination to the right */
+.pagination {
+    display: flex;
+    justify-content: flex-end; /* This will align the buttons to the right */
+    margin-top: 20px;
+}
+
+.pagination button {
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination button:hover:enabled {
+    background-color: var(--secondary-color);
+}
+/* Table Actions */
+.table-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.table-actions button {
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.table-actions button:hover {
+    background-color: var(--secondary-color);
+}
+
+#exportBtn {
+    background-color: #007bff;
+}
+
+#exportBtn:hover {
+    background-color: #0056b3;
+}
+
+/* Search Bar and Entries Per Page Layout */
+.forecast_table .d-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+
+
+.forecast_table .form-control,
+.forecast_table .form-select {
+    margin: 0 10px;
+    flex-grow: 1;
+}
+
+.forecast_table .form-control {
+    width: 50%; /* Adjust this width as needed */
+}
+
+.forecast_table .form-select {
+    width: auto; /* Keeps the dropdown small */
+}
+
+.forecast-table tbody tr:hover {
+    background-color: transparent; /* Remove hover effect for table rows */
+}
+
+.table-container .btn,
+.table-container .btn-export {
+    padding: 10px 20px;
+    margin: 5px; /* Optional, adjust as needed */
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.table-container .btn-export:hover,
+.table-container .btn:hover {
+    background-color: var(--secondary-color);
+}
+
+.table-container .export-buttons {
+    display: flex;
+    justify-content: flex-start; /* Aligns the buttons to the left */
+    gap: 10px; /* Adds space between the buttons */
+}
+
+.d-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px; /* Adjusted for spacing */
+}
+
+.d-flex div {
+    display: flex;
+    align-items: center; /* Aligns items vertically */
+}
+
+.form-select,
+.form-control {
+    padding: 10px 15px; /* Adjust padding for better touch targets */
+    border: 1px solid var(--primary-color);
+    border-radius: 5px; /* Rounded corners */
+    transition: border-color 0.3s ease; /* Smooth transition for focus */
+}
+
+.form-select:focus,
+.form-control:focus {
+    border-color: var(--secondary-color);
+    outline: none; /* Removes default outline */
+}
+
+.form-select:hover,
+.form-control:hover {
+    border-color: var(--secondary-color);
+}
+
+label {
+    margin-right: 10px; /* Space between label and input */
+}
+
+.select-container {
+    margin-right: 20px; /* Space between elements */
+}
+
+.input-container {
+    display: flex; /* Aligns the label and input */
+    align-items: center;
+}
+
+#downloadIcon {
+    position:static;
+    top: 10px;
+    right: 60px;
+    cursor: pointer;
+    font-size: 24px; /* Adjust icon size as needed */
+    color: var(--primary-color);
+    z-index: 1000; /* Ensure it's on top of other elements */
+}
+
