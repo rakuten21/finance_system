@@ -163,3 +163,112 @@ window.onload = function() {
         }
     });
 };
+
+// Export to CSV
+function exportToCSV() {
+    let csvContent = "Date,Type,Amount,Total\n";
+    sampleData.forEach(row => {
+        csvContent += `${row.date},${row.type},${row.amount},${row.total}\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", "forecast_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+// Export to Excel
+function exportToExcel() {
+    let excelContent = "Date\tType\tAmount\tTotal\n";
+    sampleData.forEach(row => {
+        excelContent += `${row.date}\t${row.type}\t${row.amount}\t${row.total}\n`;
+    });
+
+    const blob = new Blob([excelContent], { type: "application/vnd.ms-excel" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", "forecast_data.xls");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+
+// Copy to Clipboard
+function copyToClipboard() {
+    let clipboardContent = "Date,Type,Amount,Total\n";
+    sampleData.forEach(row => {
+        clipboardContent += `${row.date},${row.type},${row.amount},${row.total}\n`;
+    });
+
+    navigator.clipboard.writeText(clipboardContent).then(() => {
+        alert("Data copied to clipboard!");
+    }).catch(err => {
+        console.error("Failed to copy: ", err);
+    });
+}
+// Export to PDF
+function exportToPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.text("Forecast Data", 10, 10);
+
+    let yPosition = 20;
+    doc.text("Date", 10, yPosition);
+    doc.text("Type", 50, yPosition);
+    doc.text("Amount", 90, yPosition);
+    doc.text("Total", 130, yPosition);
+
+    yPosition += 10;
+
+    sampleData.forEach(row => {
+        doc.text(row.date, 10, yPosition);
+        doc.text(row.type, 50, yPosition);
+        doc.text(row.amount.toString(), 90, yPosition);
+        doc.text(row.total.toString(), 130, yPosition);
+        yPosition += 10;
+    });
+
+    doc.save("forecast_data.pdf");
+}
+
+// Print Table
+function printTable() {
+    const printContent = document.querySelector("#forecast-table").outerHTML;
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write("<html><head><title>Print Forecast Table</title></head><body>");
+    printWindow.document.write(printContent);
+    printWindow.document.write("</body></html>");
+    printWindow.document.close();
+    printWindow.print();
+}
+
+// Event Listeners for Export, PDF, Print, Copy, and Excel buttons
+document.querySelector(".btn-export:nth-child(1)").addEventListener("click", exportToCSV);
+document.querySelector(".btn-export:nth-child(2)").addEventListener("click", exportToPDF);
+document.querySelector(".btn-export:nth-child(3)").addEventListener("click", printTable);
+document.querySelector(".btn-export:nth-child(4)").addEventListener("click", copyToClipboard); // Copy button
+document.querySelector(".btn-export:nth-child(5)").addEventListener("click", exportToExcel); // Excel button
+
+
+// Unified download button to save both charts
+document.querySelector(".download-icon").addEventListener("click", function () {
+    // Download the line chart
+    const chartCanvas1 = document.getElementById("revenueChart");
+    const chartImage1 = chartCanvas1.toDataURL("image/png");
+    const link1 = document.createElement("a");
+    link1.href = chartImage1;
+    link1.download = "expense_tracking_chart.png";
+    link1.click();
+
+    // Download the pie chart
+    const chartCanvas2 = document.getElementById("forecastChart");
+    const chartImage2 = chartCanvas2.toDataURL("image/png");
+    const link2 = document.createElement("a");
+    link2.href = chartImage2;
+    link2.download = "expense_forecast_chart.png";
+    link2.click();
+});
